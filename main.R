@@ -30,7 +30,7 @@ gpa <-
                                                                                                                                                                                                                                                                                             -55L), class = c("tbl_df", "tbl", "data.frame"))
 
 
-randomization_test <- function(data, var_response, var_group, n_sim = 1000) {
+randomization_test <- function(data, var_response, var_group, n_sim = 1000, conf_level = 0.95) {
   # Calcular a diferença real das médias entre os grupos
   real_diff <- diff(tapply(data[[var_response]], data[[var_group]], mean))
   
@@ -43,7 +43,11 @@ randomization_test <- function(data, var_response, var_group, n_sim = 1000) {
   # Calcular o p-valor
   p_value <- mean(abs(randomized_diffs) >= abs(real_diff))
   
-  return(list(real_diff = real_diff, p_value = p_value, randomized_diffs = randomized_diffs))
+  # Calcular intervalo de confiança
+  alpha <- 1 - conf_level
+  ci <- quantile(randomized_diffs, probs = c(alpha / 2, 1 - alpha / 2))
+  
+  return(list(real_diff = real_diff, p_value = p_value, randomized_diffs = randomized_diffs, ci = ci))
 }
 
 # Aplicar o teste aos dados (comparando gpa entre gêneros)
@@ -52,6 +56,7 @@ result_randomization <- randomization_test(gpa, var_response = "gpa", var_group 
 # Exibir os resultados
 cat("Diferença real entre as médias:", result_randomization$real_diff, "\n")
 cat("p-valor do Teste de Randomização:", result_randomization$p_value, "\n")
+cat("Intervalo de confiança (95%): [", result_randomization$ci[1], ", ", result_randomization$ci[2], "]\n")
 
 hist(result_randomization$randomized_diffs, main = "Distribuição das Diferenças Simuladas",
      xlab = "Diferença Simulada", breaks = 30, col = "skyblue")
