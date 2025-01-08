@@ -57,3 +57,8 @@ hist(result_randomization$randomized_diffs, main = "Distribuição das Diferenç
      xlab = "Diferença Simulada", breaks = 30, col = "skyblue")
 abline(v = result_randomization$real_diff, col = "red", lwd = 2, lty = 2)
 legend("topright", legend = c("Diferença Real"), col = c("red"), lty = 2, lwd = 2)
+
+ggplot(gpa, aes(x = gender, y = gpa, fill = gender)) +
+  geom_boxplot(alpha = 0.7) +
+  labs(title = "Distribuição de GPA por Gênero", x = "Gênero", y = "GPA") +
+  theme_minimal()
